@@ -430,13 +430,22 @@ function sanity_check() {
 }
 
 function get_counts() {
-  EQ_COUNT=$(grep -w '^ \{1,\}[0-9]* equal' "$TMP_OUTPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
-  ADD_COUNT=$(grep -w '^ \{1,\}[0-9]* added' "$TMP_OUTPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
-  DEL_COUNT=$(grep -w '^ \{1,\}[0-9]* removed' "$TMP_OUTPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
-  UPDATE_COUNT=$(grep -w '^ \{1,\}[0-9]* updated' "$TMP_OUTPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
-  MOVE_COUNT=$(grep -w '^ \{1,\}[0-9]* moved' "$TMP_OUTPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
-  COPY_COUNT=$(grep -w '^ \{1,\}[0-9]* copied' "$TMP_OUTPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
-  # REST_COUNT=$(grep -w '^ \{1,\}[0-9]* restored' $TMP_OUTPUT | sed 's/^ *//g' | cut -d ' ' -f1)
+  # check if DIFF_IGNORE_PATHS has length greater than 0
+  DIFF_INPUT=$TMP_OUTPUT
+  if [ "${#DIFF_IGNORE_PATHS[@]}" -gt 0 ]; then
+    # If so, build a grep pattern to ignore these paths
+    IGNORE_PATTERN=$(printf "|%s" "${DIFF_IGNORE_PATHS[@]}")
+    IGNORE_PATTERN=${IGNORE_PATTERN:1} # remove leading '|'
+    DIFF_INPUT=$(grep -vE $IGNORE_PATTERN "$TMP_OUTPUT")
+  fi
+
+  EQ_COUNT=$(grep -w '^ \{1,\}[0-9]* equal' "$DIFF_INPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
+  ADD_COUNT=$(grep -w '^ \{1,\}[0-9]* added' "$DIFF_INPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
+  DEL_COUNT=$(grep -w '^ \{1,\}[0-9]* removed' "$DIFF_INPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
+  UPDATE_COUNT=$(grep -w '^ \{1,\}[0-9]* updated' "$DIFF_INPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
+  MOVE_COUNT=$(grep -w '^ \{1,\}[0-9]* moved' "$DIFF_INPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
+  COPY_COUNT=$(grep -w '^ \{1,\}[0-9]* copied' "$DIFF_INPUT" | sed 's/^ *//g' | cut -d ' ' -f1)
+  # REST_COUNT=$(grep -w '^ \{1,\}[0-9]* restored' $DIFF_INPUT | sed 's/^ *//g' | cut -d ' ' -f1)
 }
 
 function sed_me(){

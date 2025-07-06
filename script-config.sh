@@ -70,6 +70,8 @@ UP_THRESHOLD=500
 # result in an ADD_DEL_THRESHOLD of 0.76 (3800/5000)
 ADD_DEL_THRESHOLD=0
 
+DIFF_IGNORE_PATHS=("immich/thumbs" "immich/encoded-video")
+
 # Set number of warnings before forcing a sync, or force the sync every time
 # ignoring thresholds (Forced Sync). This option comes in handy when you cannot be 
 # bothered to manually start a sync job when DEL_THRESHOLD or UP_TRESHOLD are 
